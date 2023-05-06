@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Vaccine Data Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <canvas id="vaccine-chart"></canvas>
+    <script>
+      // Make API request to retrieve vaccine data
+      fetch('https://api.covid19api.com/vaccines/coverage/countries?lastdays=30')
+        .then(response => response.json())
+        .then(data => {
+          // Filter data for a specific country
+          const country = 'United States';
+          const filteredData = data.filter(item => item.country === country);
+          
+          // Extract dates and vaccinations from filtered data
+          const dates = filteredData.map(item => item.date);
+          const vaccinations = filteredData.map(item => item.total);
+          
+          // Format data for chart.js
+          const chartData = {
+            labels: dates,
+            datasets: [{
+              label: 'Vaccinations',
+              data: vaccinations,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          };
+          
+          // Create chart using chart.js
+          const vaccineChart = new Chart(document.getElementById('vaccine-chart'), {
+            type: 'line',
+            data: chartData,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
+            }
+          });
+        });
+    </script>
+  </body>
+</html>
